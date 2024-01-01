@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { multiForm } from '../redux/action';
+import { multiForm, profile } from '../redux/action';
 import Container from '@mui/material/Container';
 import CssBaseline from '@mui/material/CssBaseline';
 import Box from '@mui/material/Box';
@@ -41,6 +41,12 @@ const MultiForm = () => {
     const formData = useSelector(state => state.formData);
     const { loading, error } = formData;
 
+    useEffect(() => {
+        if (error) {
+            setErrMessage(error);
+        }
+    }, [error]);
+
     const handleBasicDetailsFormDataChange = (e) => {
         setBasicDetailsFormData({
             ...basicDetailsFormData,
@@ -78,11 +84,12 @@ const MultiForm = () => {
         setActiveStep((prevActiveStep) => prevActiveStep - 1);
     };
 
-    const handleFinish = () => {
+    const handleFinish = async () => {
         if (error) {
             setErrMessage(error)
         } else {
-            dispatch(multiForm(basicDetailsFormData.firstname, basicDetailsFormData.lastname, basicDetailsFormData.phone, basicDetailsFormData.address1, basicDetailsFormData.address2, basicDetailsFormData.city, basicDetailsFormData.state, basicDetailsFormData.country, basicDetailsFormData.pin, file, surveyFormData.ans1, surveyFormData.ans2, surveyFormData.ans3));
+            await dispatch(multiForm(basicDetailsFormData.firstname, basicDetailsFormData.lastname, basicDetailsFormData.phone, basicDetailsFormData.address1, basicDetailsFormData.address2, basicDetailsFormData.city, basicDetailsFormData.state, basicDetailsFormData.country, basicDetailsFormData.pin, file, surveyFormData.ans1, surveyFormData.ans2, surveyFormData.ans3));
+            await dispatch(profile());
             navigate('/profile');
         }
     };
